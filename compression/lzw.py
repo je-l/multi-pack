@@ -54,3 +54,23 @@ class Lzw:
             char = self.stream.read(1)
         print(str(self.dictionary[self.str]))
         return self.dictionary.values()
+
+
+def ints_to_bytes(first, second):
+    """Convert two 12-bit integers to three bytes."""
+    if first > 4095 or second > 4095:
+        raise Exception("Index more than 12 bits")
+    byte_1 = first >> 4
+    byte_2_start = first << 4
+    byte_2 = shift_mask(byte_2_start)
+    byte_2 |= second >> 8
+    byte_3 = shift_mask(second)
+
+    return byte_1, byte_2, byte_3
+
+
+def shift_mask(binary):
+    """Drop bits from the left until 8 bits are left."""
+    if binary.bit_length() < 9:
+        return binary
+    return 0xff & binary
