@@ -1,7 +1,7 @@
 # Design description
 
 Multi-pack is a command line program for compressing files with various
-compression techniques. First one is Lempel-Ziw-Welch, a dictionary based
+compression techniques. First one is Lempel-Ziv-Welch, a dictionary based
 algorithm which offers low compression ratio but fast execution and low memory
 usage.
 
@@ -13,7 +13,7 @@ algorithms will be included.
 
 ### Algorithms and data structures
 
-During encoding, Lempel-Ziw-Welch (LZW) uses a dictionary to store recurring
+During encoding, Lempel-Ziv-Welch (LZW) uses a dictionary to store recurring
 patterns in a file, storing them as indexes in a dictionary to save space. The
 dictionary is continuously checked if a specific pattern is stored, so O(1)
 search time complexity is a must. Suitable data structure would be hash table

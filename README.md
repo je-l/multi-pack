@@ -2,7 +2,7 @@
 
 Compression algorithm implementations in python
 
-- Lempel-Ziw-Welch
+- Lempel-Ziv-Welch
 - Burrow-wheeler transform with RLE
 - ...
 
