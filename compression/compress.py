@@ -32,19 +32,21 @@ def compress_str(string_input):
 
 
 def uncompress(file_name):
-    """Uncompress an lzw-compressed file.
+    """Uncompress an lzw-compressed file, and print the output.
     :param file_name: file name for uncompression.
     """
     in_stream = BitStream(filename=file_name)
     lzwer = lzw.Lzw(in_stream)
-    lzwer.uncompress()
+    for char in lzwer.uncompress():
+        print(char, end="")
+    print("")
 
 
 def main():
     """Main function. String is compressed and uncompressed."""
     test_str = "banana bandana " * 2
 
-    print("Text to be compressed: [{}]".format(test_str))
+    print(test_str)
     print("Disk usage before: {} bytes".format(len(test_str)))
     compress_str(test_str)
     uncompress("output.lzw")

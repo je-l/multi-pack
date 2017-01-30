@@ -12,6 +12,7 @@ class Lzw:
         self.dictionary = None
         self.index = 0
         self.str = ""
+        self.max = 30
         self.init_dict()
 
     def dict_add(self, dict_string):
@@ -36,13 +37,11 @@ class Lzw:
     def compress(self):
         """Compress the input stream into 12-bit indexes.
         :return yields three bytes for every two 12-bit integers."""
-        int_iter = iter(self.lzw())
-        for first_int in int_iter:
-            second_int = next(int_iter)
-            byte1, byte2, byte3 = int12_to_int8(first_int, second_int)
-            yield byte1
-            yield byte2
-            yield byte3
+        indices = self.lzw()
+        for first_int in indices:
+            second_int = next(indices, None)
+            for byte in int12_to_int8(first_int, second_int):
+                yield byte
 
     def lzw(self):
         """Compress the string using the dictionary.
@@ -54,7 +53,8 @@ class Lzw:
                 self.str = self.str + char
             else:
                 yield self.dictionary[self.str]
-                self.dict_add(self.str + char)
+                if len(self.dictionary) < self.max:
+                    self.dict_add(self.str + char)
                 self.str = char
             char = self.stream.read(1)
         yield self.dictionary[self.str]
@@ -68,37 +68,36 @@ class Lzw:
         """Uncompress with lzw."""
         self.init_uncompress_dict()
         indexes = [bits.uint for bits in self.stream.cut(12)]
-        print("Compressed disk usage: {} bytes".format(len(indexes) * 12 // 8))
         prev_index = indexes[0]
         entry = None
-        print("Uncompressed text: [", end="")
-        print(self.dictionary[prev_index], end="")
+        yield self.dictionary[prev_index]
 
         for index in indexes[1:]:
             if index >= len(self.dictionary):
                 entry = entry + entry[0]
             else:
                 entry = self.dictionary[index]
-            print(entry, end="")
+            yield entry
             char = entry[0]
             new = self.dictionary[prev_index] + char
-            self.dictionary.append(new)
+            if len(self.dictionary) < self.max:
+                self.dictionary.append(new)
             prev_index = index
-        print("]")
-        print("Uncompression dict:", self.dictionary)
 
 
-def int12_to_int8(first, second):
+def int12_to_int8(first, second=None):
     """Convert two 12-bit integers to three 8-bit integers for serialization.
     :param first: First 12-bit integer for conversion.
     :param second: Second 12-bit integer for conversion.
     :return: tuple of three 8-bit integers.
     """
-    if first > 4095 or second > 4095:
+    if first > 4095 or (second is not None and second > 4095):
         raise Exception("More than 12 bits")
     byte_1 = first >> 4
     byte_2_start = first << 4
     byte_2 = shift_mask(byte_2_start)
+    if second is None:
+        return byte_1, byte_2
     byte_2 |= second >> 8
     byte_3 = shift_mask(second)
 
