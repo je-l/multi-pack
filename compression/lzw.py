@@ -12,7 +12,7 @@ class Lzw:
         self.dictionary = None
         self.index = 0
         self.str = ""
-        self.max = 30
+        self.max = 2 ** 12
         self.init_dict()
 
     def dict_add(self, dict_string):
@@ -28,11 +28,8 @@ class Lzw:
         be some 8-bit charset.
         """
         self.dictionary = {}
-        self.dict_add("a")
-        self.dict_add("b")
-        self.dict_add("d")
-        self.dict_add("n")
-        self.dict_add(" ")
+        for i in range(256):
+            self.dict_add(chr(i))
 
     def compress(self):
         """Compress the input stream into 12-bit indexes.
@@ -61,8 +58,9 @@ class Lzw:
 
     def init_uncompress_dict(self):
         """Initialize dictionary for uncompression"""
-        self.dictionary = ["a", "b", "d", "n", " "]
-        # self.dictionary = ["a", "b"]
+        self.dictionary = []
+        for i in range(256):
+            self.dictionary.append(chr(i))
 
     def uncompress(self):
         """Uncompress with lzw."""
