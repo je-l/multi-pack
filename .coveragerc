@@ -1,0 +1,9 @@
+[run]
+omit =
+    */.local/*
+    /usr/*
+    *__init__*
+    compression/test/*
+
+[html]
+directory = docs/coverage-report

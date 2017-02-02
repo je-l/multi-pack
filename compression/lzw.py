@@ -11,7 +11,7 @@ class Lzw:
         self.stream = stream
         self.dictionary = None
         self.index = 0
-        self.str = ""
+        self.str = b""
         self.max = 2 ** 12
         self.init_dict()
 
@@ -29,7 +29,7 @@ class Lzw:
         """
         self.dictionary = {}
         for i in range(256):
-            self.dict_add(chr(i))
+            self.dict_add(bytes([i]))
 
     def compress(self):
         """Compress the input stream into 12-bit indexes.
@@ -49,7 +49,10 @@ class Lzw:
             if self.str + char in self.dictionary:
                 self.str = self.str + char
             else:
-                yield self.dictionary[self.str]
+                if len(self.str) == 0:
+                    pass
+                else:
+                    yield self.dictionary[self.str]
                 if len(self.dictionary) < self.max:
                     self.dict_add(self.str + char)
                 self.str = char
@@ -60,23 +63,23 @@ class Lzw:
         """Initialize dictionary for uncompression"""
         self.dictionary = []
         for i in range(256):
-            self.dictionary.append(chr(i))
+            self.dictionary.append(bytes([i]))
 
     def uncompress(self):
         """Uncompress with lzw."""
         self.init_uncompress_dict()
-        indexes = [bits.uint for bits in self.stream.cut(12)]
-        prev_index = indexes[0]
+        indices = [bit.uint for bit in self.stream.cut(12)]
+        prev_index = indices[0]
         entry = None
         yield self.dictionary[prev_index]
 
-        for index in indexes[1:]:
+        for index in indices[1:]:
             if index >= len(self.dictionary):
-                entry = entry + entry[0]
+                entry += bytes([entry[0]])
             else:
                 entry = self.dictionary[index]
             yield entry
-            char = entry[0]
+            char = bytes([entry[0]])
             new = self.dictionary[prev_index] + char
             if len(self.dictionary) < self.max:
                 self.dictionary.append(new)

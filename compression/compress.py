@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 
-"""Main class for comparison of compression techniques"""
+"""Main module for comparison of compression techniques"""
 
-import io
+import os
 import sys
+import time
 from bitstring import BitStream
 
 import lzw
@@ -15,7 +16,7 @@ def compress(file_input):
     :param file_input:
     :return: compressed output
     """
-    with open(file_input) as in_stream:
+    with open(file_input, "rb") as in_stream:
         compress_stream(in_stream)
 
 
@@ -26,17 +27,9 @@ def compress_stream(in_stream):
     lzw_compressor = lzw.Lzw(in_stream)
     with open("output.lzw", "wb") as out_stream:
         for index in lzw_compressor.compress():
-            out_stream.write(index.to_bytes(1, byteorder="little"))
+            out_stream.write(bytes([index]))
         print("Compressed file written")
         print("Final dict size:", len(lzw_compressor.dictionary))
-
-
-def compress_str(string_input):
-    """Compress string, print output
-    :param string_input: string for compression.
-    """
-    with io.StringIO(string_input) as in_stream:
-        compress_stream(in_stream)
 
 
 def uncompress(file_name):
@@ -45,26 +38,32 @@ def uncompress(file_name):
     """
     in_stream = BitStream(filename=file_name)
     lzwer = lzw.Lzw(in_stream)
-    with open("output", "w") as out_file:
+    with open("output", "wb") as out_file:
         for char in lzwer.uncompress():
             out_file.write(char)
 
 
 def main():
-    """Main function. If an argument is given, a file is compressed,
-    otherwise a test string is compressed.
-    """
-    if len(sys.argv) > 1:
-        filename = sys.argv[1]
-        print("Compressing file:", filename)
-        compress(sys.argv[1])
-    else:
-        test_str = "banana bandana " * 2
-
-        print(test_str)
-        print("Disk usage before: {} bytes".format(len(test_str)))
-        compress_str(test_str)
+    """Main function. First argument is the file for compression."""
+    start_ts = time.time()
+    if len(sys.argv) < 2:
+        print("Argument missing.")
+        return
+    filename = sys.argv[1]
+    original_size = os.stat(filename).st_size
+    print("Original size: {:.1f} KB".format(original_size / 1024))
+    print("Compressing file:", filename)
+    compress(sys.argv[1])
+    compress_complete_ts = time.time()
+    elapsed = compress_complete_ts - start_ts
+    print("Compress complete in {:.0f} ms".format(elapsed * 1000))
     uncompress("output.lzw")
+    elapsed = time.time() - compress_complete_ts
+    print("Uncompress complete in {:.0f} ms".format(elapsed * 1000))
+    min_size = os.stat("output.lzw").st_size
+    print("output size: {:.1f} KB".format(min_size / 1024))
+    print("Compression ratio: {:.2f}".format(original_size / min_size))
+    print("Total time: {:.0f} ms".format((time.time() - start_ts) * 1000))
 
 
 if __name__ == "__main__":

@@ -11,11 +11,11 @@ from .. import lzw
 
 class TestLzw(unittest.TestCase):
     def setUp(self):
-        with io.StringIO("banana bandana " * 2) as in_stream:
+        with open("LICENSE", "rb") as in_stream:
             lzw_compressor = lzw.Lzw(in_stream)
             with open("test_output.lzw", "wb") as out_stream:
                 for byte in lzw_compressor.compress():
-                    out_stream.write(byte.to_bytes(1, byteorder="little"))
+                    out_stream.write(bytes([byte]))
 
     def test_lzw_example_empty_dict(self):
         with io.StringIO("") as empty_stream:

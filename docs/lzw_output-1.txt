@@ -1,0 +1,11 @@
+sample file: "The Mimic Stage, by George M Baker" http://www.gutenberg.org/files/54063/54063-0.txt
+
+Original size: 405.8 KB
+Compressing file: book.txt
+Compressed file written
+Final dict size: 4096
+Compress complete in 514 ms
+Uncompress complete in 3472 ms
+output size: 220.4 KB
+Compression ratio: 1.84
+Total time: 3986 ms
