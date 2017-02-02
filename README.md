@@ -6,6 +6,8 @@ Compression algorithm implementations in python
 - Burrow-wheeler transform with RLE
 - ...
 
+### [Test coverage](http://htmlpreview.github.io/?https://github.com/je-l/multi-pack/blob/master/docs/coverage-report/index.html)
+
 ### Requirements
 * Python >3.5.2 - older versions not tested
 * [bitstring module](https://pypi.python.org/pypi/bitstring) (MIT license)
