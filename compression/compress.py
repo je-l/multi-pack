@@ -39,8 +39,8 @@ def uncompress(file_name):
     in_stream = BitStream(filename=file_name)
     lzwer = lzw.Lzw(in_stream)
     with open("output", "wb") as out_file:
-        for char in lzwer.uncompress():
-            out_file.write(char)
+        for byte in lzwer.uncompress():
+            out_file.write(byte)
 
 
 def main():

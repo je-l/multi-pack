@@ -17,9 +17,9 @@ Compression algorithm implementations in python
 ### Usage
 `cd multi-pack/compression`
 
-`python3 compress.py`
+`python3 compress.py FILE`
 
-Currently only simple LZW encoding/decoding example is printed, as seen [here](https://www.cs.duke.edu/csed/curious/compression/lzw.html)
+Original file is preserved. Compressed file is `output.lzw` and decompressed file is `output`
 
 ### Running tests
 Using for example [nose2](https://github.com/nose-devs/nose2) or pycharm builtin testing module.

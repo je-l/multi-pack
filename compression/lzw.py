@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 #  -*- coding: utf-8 -*-
 
-"""Lempel–Ziv–Welch compression algorithm example, with small dictionary."""
+"""Lempel–Ziv–Welch compression algorithm example, with 4096 dictionary size."""
 
 
 class Lzw:
-    """Lempel-Ziv-Welch compression example."""
+    """Lempel-Ziv-Welch compression implementation."""
 
-    def __init__(self, stream):
+    def __init__(self, stream, dict_size=4096):
         self.stream = stream
         self.dictionary = None
         self.index = 0
         self.str = b""
-        self.max = 2 ** 12
+        self.max = dict_size
         self.init_dict()
 
     def dict_add(self, dict_string):
@@ -33,7 +33,8 @@ class Lzw:
 
     def compress(self):
         """Compress the input stream into 12-bit indexes.
-        :return yields three bytes for every two 12-bit integers."""
+        :return: yields three bytes for every two 12-bit integers.
+        """
         indices = self.lzw()
         for first_int in indices:
             second_int = next(indices, None)
@@ -66,7 +67,9 @@ class Lzw:
             self.dictionary.append(bytes([i]))
 
     def uncompress(self):
-        """Uncompress with lzw."""
+        """Uncompress with lzw.
+        :return: Generator for the uncompressed bytes.
+        """
         self.init_uncompress_dict()
         indices = [bit.uint for bit in self.stream.cut(12)]
         prev_index = indices[0]

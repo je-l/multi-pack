@@ -35,6 +35,25 @@ class TestLzw(unittest.TestCase):
         lzw_decoder.uncompress()
         self.assertEqual(256, len(lzw_decoder.dictionary))
 
+    def test_lzw_uncompression_long(self):
+        in_stream = BitStream(filename="test_output.lzw")
+        lzw_decoder = lzw.Lzw(in_stream)
+        byte_gen = lzw_decoder.uncompress()
+        with open("LICENSE") as original_file:
+            data = original_file.read()
+
+        output = b""
+        for byte in byte_gen:
+            output += byte
+        self.assertEqual(len(data), len(output))
+
+    def test_lzw_uncompression_every_byte(self):
+        in_stream = BitStream(filename="test_output.lzw")
+        lzw_decoder = lzw.Lzw(in_stream)
+        with open("test_output", "wb") as outfile:
+            for byte in lzw_decoder.uncompress():
+                outfile.write(byte)
+
     def test_shift_mask_empty_binary(self):
         result = lzw.shift_mask(0b0)
         self.assertEqual(result, 0b0)
