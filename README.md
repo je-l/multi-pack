@@ -9,7 +9,7 @@ Compression algorithm implementations in python
 ### [Test coverage](http://htmlpreview.github.io/?https://github.com/je-l/multi-pack/blob/master/docs/coverage-report/index.html)
 
 ### Requirements
-* Python >3.5.2 - older versions not tested
+* Python >=3.5.2 - older versions not tested
 
 ### Installation
 `git clone`
@@ -22,8 +22,8 @@ Compression algorithm implementations in python
 Original file is preserved. Compressed file is `output.lzw` and decompressed file is `output`
 
 ### Running tests
-Using for example [nose2](https://github.com/nose-devs/nose2) or pycharm builtin testing module.
+Using for example [nose2](https://nose2.readthedocs.io/en/latest/) or pycharm built-in testing module.
 
 `cd multi-pack`
 
-`nose2`
+`nose2 --verbose`

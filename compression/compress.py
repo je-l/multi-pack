@@ -56,12 +56,16 @@ def main():
     compress_complete_ts = time.time()
     elapsed = compress_complete_ts - start_ts
     print("Compress complete in {:.0f} ms".format(elapsed * 1000))
+
     uncompress("output.lzw")
     elapsed = time.time() - compress_complete_ts
     print("Uncompress complete in {:.0f} ms".format(elapsed * 1000))
     min_size = os.stat("output.lzw").st_size
     print("output size: {:.1f} KB".format(min_size / 1024))
-    print("Compression ratio: {:.2f}".format(original_size / min_size))
+
+    ratio = original_size / min_size
+    percentage = min_size / original_size * 100
+    print("Compression ratio: {:.2f} ({:.1f}%)".format(ratio, percentage))
     print("Total time: {:.0f} ms".format((time.time() - start_ts) * 1000))
 
 
