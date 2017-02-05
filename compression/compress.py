@@ -6,7 +6,6 @@
 import os
 import sys
 import time
-from bitstring import BitStream
 
 import lzw
 
@@ -36,11 +35,11 @@ def uncompress(file_name):
     """Uncompress an lzw-compressed file, and print the output.
     :param file_name: file name for uncompression.
     """
-    in_stream = BitStream(filename=file_name)
-    lzwer = lzw.Lzw(in_stream)
-    with open("output", "wb") as out_file:
-        for byte in lzwer.uncompress():
-            out_file.write(byte)
+    with open(file_name, "rb") as in_stream:
+        lzwer = lzw.Lzw(in_stream)
+        with open("output", "wb") as out_file:
+            for byte in lzwer.uncompress():
+                out_file.write(byte)
 
 
 def main():

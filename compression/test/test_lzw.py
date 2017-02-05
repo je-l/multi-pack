@@ -5,7 +5,6 @@
 
 import unittest
 import io
-from bitstring import BitStream
 from .. import lzw
 
 
@@ -30,53 +29,29 @@ class TestLzw(unittest.TestCase):
             self.assertEqual(len(lzw_encoder.dictionary), 256)
 
     def test_lzw_uncompression(self):
-        stream = BitStream(filename="test_output.lzw")
-        lzw_decoder = lzw.Lzw(stream)
-        lzw_decoder.uncompress()
-        self.assertEqual(256, len(lzw_decoder.dictionary))
+        with open("test_output.lzw", "rb") as in_stream:
+            lzw_decoder = lzw.Lzw(in_stream)
+            lzw_decoder.uncompress()
+            self.assertEqual(256, len(lzw_decoder.dictionary))
 
     def test_lzw_uncompression_long(self):
-        in_stream = BitStream(filename="test_output.lzw")
-        lzw_decoder = lzw.Lzw(in_stream)
-        byte_gen = lzw_decoder.uncompress()
-        with open("LICENSE") as original_file:
-            data = original_file.read()
+        with open("test_output.lzw", "rb") as in_stream:
+            lzw_decoder = lzw.Lzw(in_stream)
+            byte_gen = lzw_decoder.uncompress()
+            with open("LICENSE") as original_file:
+                data = original_file.read()
 
-        output = b""
-        for byte in byte_gen:
-            output += byte
-        self.assertEqual(len(data), len(output))
+            output = b""
+            for byte in byte_gen:
+                output += byte
+            self.assertEqual(len(data), len(output))
 
     def test_lzw_uncompression_every_byte(self):
-        in_stream = BitStream(filename="test_output.lzw")
-        lzw_decoder = lzw.Lzw(in_stream)
-        with open("test_output", "wb") as outfile:
-            for byte in lzw_decoder.uncompress():
-                outfile.write(byte)
-
-    def test_shift_mask_empty_binary(self):
-        result = lzw.shift_mask(0b0)
-        self.assertEqual(result, 0b0)
-
-    def test_shift_mask_two_byte_max(self):
-        result = lzw.shift_mask(0b1111111111111111)
-        self.assertEqual(result, 0b11111111)
-
-    def test_shift_mask_one_byte_max(self):
-        result = lzw.shift_mask(0b11111111)
-        self.assertEqual(result, 0b11111111)
-
-    def test_shift_mask_one(self):
-        result = lzw.shift_mask(0b1)
-        self.assertEqual(result, 0b1)
-
-    def test_shift_mask_9_bits(self):
-        result = lzw.shift_mask(0b111111111)
-        self.assertEqual(result, 0b11111111)
-
-    def test_shift_mask_leading_zero(self):
-        result = lzw.shift_mask(0b000001111111)
-        self.assertEqual(result, 0b1111111)
+        with open("test_output.lzw", "rb") as in_stream:
+            lzw_decoder = lzw.Lzw(in_stream)
+            with open("test_output", "wb") as outfile:
+                for byte in lzw_decoder.uncompress():
+                    outfile.write(byte)
 
     def test_bit_convert_zeros(self):
         byte_1, byte_2, byte_3 = lzw.int12_to_int8(0, 0)
@@ -133,3 +108,22 @@ class TestLzw(unittest.TestCase):
         byte_1, byte_2 = lzw.int12_to_int8(4093)
         self.assertEqual(byte_1, 0b11111111)
         self.assertEqual(byte_2, 0b11010000)
+
+    def test_12bit_convert_minimum(self):
+        byte_1 = lzw.int8_to_int12(0b0, 0b0)
+        self.assertEqual(byte_1, 0b0)
+
+    def test_12bit_convert_medium(self):
+        byte_1, byte_2 = lzw.int8_to_int12(0b10, 0b10, 0b10)
+        self.assertEqual(byte_1, 0b100000)
+        self.assertEqual(byte_2, 0b1000000010)
+
+    def test_12bit_convert_maximum(self):
+        byte_1, byte_2 = lzw.int8_to_int12(0b11111111, 0b11111111, 0b11111111)
+        self.assertEqual(byte_1, 0b111111111111)
+        self.assertEqual(byte_2, 0b111111111111)
+
+    def test_12bit_convert_almost_maximum(self):
+        byte_1, byte_2 = lzw.int8_to_int12(0b1111111, 0b1111111, 0b1111111)
+        self.assertEqual(byte_1, 0b11111110111)
+        self.assertEqual(byte_2, 0b111101111111)

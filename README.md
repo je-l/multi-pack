@@ -10,8 +10,6 @@ Compression algorithm implementations in python
 
 ### Requirements
 * Python >3.5.2 - older versions not tested
-* [bitstring module](https://pypi.python.org/pypi/bitstring) (MIT license)
-
 
 ### Installation
 `git clone`
