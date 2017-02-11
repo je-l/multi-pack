@@ -1,9 +1,9 @@
 [run]
-omit =
+ omit =
     */.local/*
     /usr/*
     *__init__*
-    compression/test/*
+    test/*
 
 [html]
 directory = docs/coverage-report

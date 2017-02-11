@@ -5,7 +5,8 @@
 
 import unittest
 import io
-from .. import lzw
+
+import multipack.lzw as lzw
 
 
 class TestLzw(unittest.TestCase):

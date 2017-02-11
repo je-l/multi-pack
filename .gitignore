@@ -2,4 +2,4 @@
 .coverage
 *.pyc
 *.lzw
-
+.cache

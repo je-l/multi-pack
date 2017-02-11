@@ -15,15 +15,15 @@ Compression algorithm implementations in python
 `git clone`
 
 ### Usage
-`cd multi-pack/compression`
+* cd to project root
 
-`python3 compress.py FILE`
+* `python3 compress.py FILE`
 
 Original file is preserved. Compressed file is `output.lzw` and decompressed file is `output`
 
 ### Running tests
-Using for example [nose2](https://nose2.readthedocs.io/en/latest/) or pycharm built-in testing module.
+Using for example [pytest](http://doc.pytest.org/) or pycharm built-in testing module.
 
-`cd multi-pack`
+* cd to project root
 
-`nose2 --verbose`
+* `pytest --verbose`

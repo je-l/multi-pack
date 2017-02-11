@@ -7,7 +7,7 @@ import os
 import sys
 import time
 
-import lzw
+from multipack.lzw import Lzw
 
 
 def compress(file_input):
@@ -23,7 +23,7 @@ def compress_stream(in_stream):
     """Compress text stream.
     :param in_stream: text stream for compression.
     """
-    lzw_compressor = lzw.Lzw(in_stream)
+    lzw_compressor = Lzw(in_stream)
     with open("output.lzw", "wb") as out_stream:
         for index in lzw_compressor.compress():
             out_stream.write(bytes([index]))
@@ -36,7 +36,7 @@ def uncompress(file_name):
     :param file_name: file name for uncompression.
     """
     with open(file_name, "rb") as in_stream:
-        lzwer = lzw.Lzw(in_stream)
+        lzwer = Lzw(in_stream)
         with open("output", "wb") as out_file:
             for byte in lzwer.uncompress():
                 out_file.write(byte)

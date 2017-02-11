@@ -3,6 +3,8 @@
 
 """Lempel–Ziv–Welch compression algorithm example, with 4096 dictionary size."""
 
+from multipack.datastructures import HashTable
+
 
 class Lzw:
     """Lempel-Ziv-Welch compression implementation."""
@@ -25,7 +27,7 @@ class Lzw:
 
     def init_dict(self):
         """Initialize the dictionary with 256 characters."""
-        self.dictionary = {}
+        self.dictionary = HashTable()
         for i in range(256):
             self.dict_add(bytes([i]))
 

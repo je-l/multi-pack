@@ -4,7 +4,7 @@
 """Tests for data structures."""
 
 import unittest
-from ..datastructures import Node, LinkedList, HashTable
+from multipack.datastructures import Node, LinkedList, HashTable
 
 
 class TestDatastructures(unittest.TestCase):
@@ -76,3 +76,19 @@ class TestDatastructures(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             k = hash_table["k"]
+
+    def test_hash_table_contains(self):
+        hash_table = HashTable()
+        hash_table["a"] = 2
+        self.assertTrue("a" in hash_table)
+
+    def test_hash_table_contains_missing(self):
+        hash_table = HashTable()
+        hash_table["a"] = 2
+        self.assertFalse("b" in hash_table)
+
+    def test_hash_table_contains_complex(self):
+        hash_table = HashTable()
+        emoji_string = "$affs🐲d"
+        hash_table[emoji_string] = -1
+        self.assertTrue(emoji_string in hash_table)

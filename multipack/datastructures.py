@@ -10,7 +10,7 @@ class LinkedList:
         self.first = None
 
     def add_last(self, key, value):
-        """Add new node to this linked list."""
+        """Add new node to the last position of this linked list."""
         if self.first is None:
             self.first = Node(key, value)
         else:
@@ -20,7 +20,7 @@ class LinkedList:
             temp_last.next = Node(key, value)
 
     def add_first(self, key, value):
-        """Add a new data node to first position in the linked list."""
+        """Add a new data node to the first position in the linked list."""
         new_node = Node(key, value)
         new_node.next = self.first
         self.first = new_node
@@ -75,18 +75,29 @@ class HashTable:
 
     def __getitem__(self, item):
         """Get value for specified key."""
+        if item not in self:
+            raise KeyError('key "{}" not in hash table.'.format(item))
         hashed = self.hash(item)
-        if self.nodes[hashed] is not None:
-            node = self.nodes[hashed].first
-            while node is not None:
-                if node.key == item:
-                    return node.data
+        node = self.nodes[hashed].first
+        while node is not None:
+            if node.key == item:
+                return node.data
+            node = node.next
 
-                node = node.next
-        raise KeyError('key "{}" not in hash table.'.format(item))
+    def __contains__(self, item):
+        """Check if table has key in it."""
+        hashed = self.hash(item)
+        if self.nodes[hashed] is None:
+            return False
+        node = self.nodes[hashed].first
+        while node is not None:
+            if node.key == item:
+                return True
+            node = node.next
+        return False
 
     def hash(self, key):
-        """Remainder hashing function as in course material."""
+        """Remainder based hashing function as in course material."""
         hashed = hash(key)
         return hashed % len(self.nodes)
 
