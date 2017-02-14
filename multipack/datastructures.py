@@ -57,7 +57,9 @@ class HashTable:
         self.size = 0
 
     def __setitem__(self, key, value):
-        """Add new key-value pair to the hash table."""
+        """Add new key-value pair to the hash table.
+        :param key: the key we want to target.
+        :param value: value for the key."""
         node_hash = self.hash(key)
         if self.nodes[node_hash] is None:
             self.nodes[node_hash] = LinkedList()
@@ -74,7 +76,9 @@ class HashTable:
         self.size += 1
 
     def __getitem__(self, item):
-        """Get value for specified key."""
+        """Get value for specified key.
+        :param item: key in the hash table.
+        :return: value associated with the key."""
         if item not in self:
             raise KeyError('key "{}" not in hash table.'.format(item))
         hashed = self.hash(item)
@@ -85,7 +89,10 @@ class HashTable:
             node = node.next
 
     def __contains__(self, item):
-        """Check if table has key in it."""
+        """Check if table has key in it.
+        :param item: object to search for.
+        :return: boolean
+        """
         hashed = self.hash(item)
         if self.nodes[hashed] is None:
             return False

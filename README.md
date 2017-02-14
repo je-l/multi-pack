@@ -19,11 +19,11 @@ Compression algorithm implementations in python
 
 * `python3 compress.py FILE`
 
-Original file is preserved. Compressed file is `output.lzw` and decompressed file is `output`
+Original file is preserved. Compressed file is `output.lzw` and decompressed
+file is `output`
 
 ### Running tests
-Using for example [pytest](http://doc.pytest.org/) or pycharm built-in testing module.
 
 * cd to project root
 
-* `pytest --verbose`
+* `python3 -m unittest -v`
