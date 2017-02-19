@@ -17,7 +17,7 @@ Compression algorithm implementations in python
 ### Usage
 * cd to project root
 
-* `python3 compress.py FILE`
+* E.g. `python3 compress.py --lzw FILE`
 
 Original file is preserved. Compressed file is `output.lzw` and decompressed
 file is `output`
