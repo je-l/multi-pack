@@ -80,7 +80,11 @@ def main():
         bwt_uncompress("output.bwt")
     elapsed = time.time() - compress_complete_ts
     print("Uncompress complete in {:.0f} ms".format(elapsed * 1000))
-    min_size = os.stat("output.bwt").st_size
+    if args.lzw:
+        min_size = os.stat("output.lzw").st_size
+    else:
+        min_size = os.stat("output.bwt").st_size
+
     print("output size: {:.1f} KB".format(min_size / 1024))
 
     ratio = original_size / 0.1 if min_size == 0 else min_size
