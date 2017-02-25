@@ -4,7 +4,6 @@ Compression algorithm implementations in python
 
 - Lempel-Ziv-Welch
 - Burrow-wheeler transform with RLE
-- ...
 
 ### [Test coverage](http://htmlpreview.github.io/?https://github.com/je-l/multi-pack/blob/master/docs/coverage-report/index.html)
 

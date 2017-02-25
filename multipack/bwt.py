@@ -4,6 +4,7 @@
 """BWT encoding and decoding for strings."""
 
 CHUNK_SIZE = 10000
+import io
 
 
 def bwt_encode(stream):
@@ -55,3 +56,24 @@ def find_decoded(table):
         if row.endswith("\003"):
             return row
     raise Exception("No ETX character-ending row in table.")
+
+
+def rle_encode(input):
+    """Use run length encoding on a string."""
+    output = ""
+    streak = 1
+    prev = input.read(1)
+    if not prev:
+        return ""
+    while True:
+        char = input.read(1)
+        if not char:
+            break
+        if char == prev and streak < 256:
+            streak += 1
+        else:
+            output = output + prev + str(streak)
+            streak = 1
+        prev = char
+    output = output + prev + str(streak)
+    return output

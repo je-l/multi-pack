@@ -87,7 +87,7 @@ def main():
 
     print("output size: {:.1f} KB".format(min_size / 1024))
 
-    ratio = original_size / 0.1 if min_size == 0 else min_size
+    ratio = original_size / (0.1 if min_size == 0 else min_size)
     percentage = min_size / original_size * 100
     print("Compression ratio: {:.2f} ({:.1f}%)".format(ratio, percentage))
     print("Total time: {:.0f} ms".format((time.time() - start_ts) * 1000))

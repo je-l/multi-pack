@@ -4,6 +4,7 @@
 """Test for burrows-wheeler transform."""
 
 import unittest
+import io
 
 from multipack.bwt import *
 
@@ -30,3 +31,33 @@ class TestBwt(unittest.TestCase):
     def test_find_etx(self):
         table = ["fo\003o", "bar\003"]
         self.assertEqual("bar\003", find_decoded(table))
+
+    def test_rle_empty(self):
+        with io.StringIO("") as empty_stream:
+            encoded = rle_encode(empty_stream)
+            self.assertEqual("", encoded)
+
+    def test_rle_one_char(self):
+            with io.StringIO("a") as empty_stream:
+                encoded = rle_encode(empty_stream)
+                self.assertEqual("a1", encoded)
+
+    def test_rle_short(self):
+            with io.StringIO("abcc") as empty_stream:
+                encoded = rle_encode(empty_stream)
+                self.assertEqual("a1b1c2", encoded)
+
+    def test_rle_short2(self):
+            with io.StringIO("aabbccddeeeee") as empty_stream:
+                encoded = rle_encode(empty_stream)
+                self.assertEqual("a2b2c2d2e5", encoded)
+
+    def test_rle_long(self):
+            with io.StringIO("a" * 100) as empty_stream:
+                encoded = rle_encode(empty_stream)
+                self.assertEqual("a100", encoded)
+
+    def test_rle_long2(self):
+            with io.StringIO("a" * 257) as empty_stream:
+                encoded = rle_encode(empty_stream)
+                self.assertEqual("a256a1", encoded)
