@@ -4,7 +4,6 @@
 """BWT encoding and decoding for strings."""
 
 CHUNK_SIZE = 10000
-import io
 
 
 def bwt_encode(stream):
@@ -28,7 +27,7 @@ def create_table(string):
     altogether.
     """
     table = []
-    for index in range(len(string)):
+    for index, _ in enumerate(string):
         start = string[index:]
         end = string[:index]
         table.append(start + end)
@@ -39,13 +38,12 @@ def bwt_decode(stream):
     """Decode bwt-rearranged text."""
     code = stream.read()
     table = [""] * len(code)
-    for rotation in range(len(code)):
+    for rotation in enumerate(code):
         column = []
         for i, _ in enumerate(code):
             column.insert(0, code[i] + table[i])
         table = sorted(column)
 
-    print("After len:", len(table))
     decoded_row = find_decoded(table)
     return decoded_row.rstrip("\003").strip("\002")
 
@@ -58,22 +56,33 @@ def find_decoded(table):
     raise Exception("No ETX character-ending row in table.")
 
 
-def rle_encode(input):
+def rle_encode(stream):
     """Use run length encoding on a string."""
-    output = ""
+    output = b""
     streak = 1
-    prev = input.read(1)
+    prev = stream.read(1)
     if not prev:
-        return ""
+        return b""
     while True:
-        char = input.read(1)
+        char = stream.read(1)
         if not char:
             break
-        if char == prev and streak < 256:
+        if char == prev and streak < 255:
             streak += 1
         else:
-            output = output + prev + str(streak)
+            output += prev + bytes([streak])
             streak = 1
         prev = char
-    output = output + prev + str(streak)
+
+    output += prev + bytes([streak])
     return output
+
+
+def rle_decode(stream):
+    """Decode run-length encoded byte stream."""
+    while True:
+        byte = stream.read(1)
+        if not byte:
+            break
+        count = int.from_bytes(stream.read(1), byteorder="little")
+        yield byte * count

@@ -33,31 +33,57 @@ class TestBwt(unittest.TestCase):
         self.assertEqual("bar\003", find_decoded(table))
 
     def test_rle_empty(self):
-        with io.StringIO("") as empty_stream:
+        with io.BytesIO(b"") as empty_stream:
             encoded = rle_encode(empty_stream)
-            self.assertEqual("", encoded)
+            self.assertEqual(b"", encoded)
 
-    def test_rle_one_char(self):
-            with io.StringIO("a") as empty_stream:
-                encoded = rle_encode(empty_stream)
-                self.assertEqual("a1", encoded)
+    def test_rle_encoding_one_char(self):
+        with io.BytesIO(b"a") as stream:
+            encoded = rle_encode(stream)
+            self.assertEqual(b"a\x01", encoded)
 
-    def test_rle_short(self):
-            with io.StringIO("abcc") as empty_stream:
-                encoded = rle_encode(empty_stream)
-                self.assertEqual("a1b1c2", encoded)
+    def test_rle_encoding_short(self):
+        with io.BytesIO(b"abcc") as stream:
+            encoded = rle_encode(stream)
+            self.assertEqual(b"a\x01b\x01c\x02", encoded)
 
-    def test_rle_short2(self):
-            with io.StringIO("aabbccddeeeee") as empty_stream:
-                encoded = rle_encode(empty_stream)
-                self.assertEqual("a2b2c2d2e5", encoded)
+    def test_rle_encoding_short2(self):
+        with io.BytesIO(b"aabbccddeeeee") as stream:
+            encoded = rle_encode(stream)
+            self.assertEqual(b"a\x02b\x02c\x02d\x02e\x05", encoded)
 
-    def test_rle_long(self):
-            with io.StringIO("a" * 100) as empty_stream:
-                encoded = rle_encode(empty_stream)
-                self.assertEqual("a100", encoded)
+    def test_rle_encoding_long(self):
+        with io.BytesIO(b"a" * 100) as stream:
+            encoded = rle_encode(stream)
+            self.assertEqual(b"a\x64", encoded)
 
-    def test_rle_long2(self):
-            with io.StringIO("a" * 257) as empty_stream:
-                encoded = rle_encode(empty_stream)
-                self.assertEqual("a256a1", encoded)
+    def test_rle_encoding_long2(self):
+        with io.BytesIO(b"a" * 256) as stream:
+            encoded = rle_encode(stream)
+            self.assertEqual(b"a\xffa\x01", encoded)
+
+    def test_rle_decoding_empty(self):
+        with io.BytesIO(b"") as stream:
+            decoded = b"".join(rle_decode(stream))
+            self.assertEqual(b"", decoded)
+
+    def test_rle_decoding_short(self):
+        with io.BytesIO(b"a\x01") as stream:
+            decoded = b"".join(rle_decode(stream))
+            self.assertEqual(b"a", decoded)
+
+    def test_rle_decoding_short2(self):
+        with io.BytesIO(b"a\x02") as stream:
+            decoded = b"".join(rle_decode(stream))
+            self.assertEqual(b"aa", decoded)
+
+    def test_rle_decoding_short3(self):
+        with io.BytesIO(b"a\x02b\x01") as stream:
+            decoded = b"".join(rle_decode(stream))
+            self.assertEqual(b"aab", decoded)
+
+    def test_rle_decoding_long(self):
+        with io.BytesIO(b"a\xffa\xffc\x05") as stream:
+            decoded = b"".join(rle_decode(stream))
+            expected = b"a" * 510 + b"ccccc"
+            self.assertEqual(expected, decoded)
