@@ -100,12 +100,12 @@ def init_args():
     algo_choice = arg.add_mutually_exclusive_group(required=True)
     arg.add_argument("filename",
                      metavar="FILE",
-                     help="Filename for the target file.")
+                     help="filename for the target file")
     algo_choice.add_argument("--lzw",
-                             help="Use Lempel-Ziv-Welch compression technique.",
+                             help="use Lempel-Ziv-Welch compression technique",
                              action="store_true")
     algo_choice.add_argument("--bwt",
-                             help="Use Burrows-Wheeler transform technique.",
+                             help="use Burrows-Wheeler transform technique",
                              action="store_true")
     args = arg.parse_args()
     return args

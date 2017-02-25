@@ -1,4 +1,4 @@
-sample file: "The Mimic Stage, by George M Baker" http://www.gutenberg.org/files/54063/54063-0.txt
+sample file: "The Mimic Stage, by George M Baker" http://www.gutenberg.org/ebooks/54063
 11.2.
 
 Original size: 405.8 KB
