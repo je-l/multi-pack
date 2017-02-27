@@ -62,7 +62,7 @@ inverse-bwt(s)
     T = [s1, s2,...,sn]
     for i = 0 to s.length
         A = [s.length]
-        for j = 0 to s.length 
+        for j = 0 to s.length
             A.prepend(s[j] + T[j])
         sort T
         table = T
@@ -70,7 +70,7 @@ inverse-bwt(s)
 ```
 
 The sort function is currently the python default, which is O(n log n).
-Sorting is done n times, so the complexity is polynomial.
+Prepending is done n<sup>2</sup> times, so the complexity is polynomial.
 
 Bwt can be done in linear time if we save an index array to the file.
 Counting sort is suitable algorithm for this purpose.
