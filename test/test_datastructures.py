@@ -13,6 +13,17 @@ class TestDatastructures(unittest.TestCase):
         node = Node(1, 2)
         self.assertEqual(2, node.data)
 
+    def test_node_comparison_1(self):
+        node_1 = Node(1, 1)
+        node_2 = Node(2, 2)
+        node_3 = Node(3, 3)
+        node_4 = Node(4, 4)
+        node_5 = Node(5, 5)
+        node_5_2 = Node(5, 5)
+        self.assertTrue(node_1 < node_2)
+        self.assertEqual(node_5, node_5_2)
+        self.assertTrue(node_4 > node_3)
+
     def test_linked_list_creation(self):
         linked_list = LinkedList()
         self.assertIsNone(linked_list.first)

@@ -1,0 +1,19 @@
+[je-l@localhost multi-pack]$ du -b LICENSE license_x4.txt 
+1063    LICENSE
+4252    license_x4.txt
+
+[je-l@localhost multi-pack]$ python3 compress.py -v --bwt LICENSE
+Original size: 1.0 KB
+Compress complete in 6 ms
+Uncompress complete in 3754 ms
+output size: 1.4 KB
+Compression ratio: 0.72 (138.3%)
+Total time: 3760 ms
+
+[je-l@localhost multi-pack]$ python3 compress.py -v --bwt license_x4.txt
+Original size: 4.2 KB
+Compress complete in 30 ms
+Uncompress complete in 145925 ms
+output size: 1.4 KB
+Compression ratio: 2.88 (34.7%)
+Total time: 145955 ms

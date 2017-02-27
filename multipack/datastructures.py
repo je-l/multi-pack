@@ -8,6 +8,7 @@ class LinkedList:
     """Linked list implementation."""
     def __init__(self):
         self.first = None
+        self.current = None
 
     def add_last(self, key, value):
         """Add new node to the last position of this linked list."""
@@ -19,11 +20,24 @@ class LinkedList:
                 temp_last = temp_last.next
             temp_last.next = Node(key, value)
 
-    def add_first(self, key, value):
+    def add_first(self, key=None, value=None):
         """Add a new data node to the first position in the linked list."""
         new_node = Node(key, value)
         new_node.next = self.first
         self.first = new_node
+
+    def __iter__(self):
+        if self.first is not None:
+            self.current = self.first
+        return self
+
+    def __next__(self):
+        if self.current is None:
+            raise StopIteration
+        else:
+            val = self.current
+            self.current = self.current.next
+            return val
 
     def __str__(self):
         string = ""
@@ -36,11 +50,25 @@ class LinkedList:
 
 class Node:
     """Node in linked list."""
-
-    def __init__(self, key, value):
+    def __init__(self, key=None, value=None):
         self.key = key
         self.data = value
         self.next = None
+
+    def __eq__(self, other):
+        return self.data == other.data
+
+    def __le__(self, other):
+        return self.data <= other.data
+
+    def __lt__(self, other):
+        return self.data < other.data
+
+    def __ge__(self, other):
+        return self.data >= other.data
+
+    def __gt__(self, other):
+        return self.data > other.data
 
     def __str__(self):
         return str(self.data)

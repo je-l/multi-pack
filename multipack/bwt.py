@@ -12,8 +12,10 @@ def bwt_encode(stream):
     :return: generator for bwt-rearranged string.
     """
     chunk = stream.read(CHUNK_SIZE)
+    if not chunk:
+        yield b"\x03\x02"
     while chunk:
-        chunk = "\002" + chunk + "\003"
+        chunk = b"\x02" + chunk + b"\x03"
         table = create_table(chunk)
         for rotation in table:
             yield rotation[-1:]
@@ -34,38 +36,44 @@ def create_table(string):
     return sorted(table)
 
 
-def bwt_decode(stream):
+def bwt_decode(text_input):
     """Decode bwt-rearranged text."""
-    code = stream.read()
-    table = [""] * len(code)
-    for rotation in enumerate(code):
+    table = [b""] * len(text_input)
+    for rotation, j in enumerate(text_input):
         column = []
-        for i, _ in enumerate(code):
-            column.insert(0, code[i] + table[i])
+        for i, a in enumerate(text_input):
+            column.insert(0, bytes([text_input[i]]) + table[i])
+
         table = sorted(column)
 
     decoded_row = find_decoded(table)
-    return decoded_row.rstrip("\003").strip("\002")
+    return decoded_row.rstrip(b"\x03").strip(b"\x02")
 
 
 def find_decoded(table):
-    """Look for row which ends to "end of text" (ETX) control character."""
+    """Look for row which ends to "end of text" (ETX) control character.
+    :param table: table of strings, where one should end with ETX control
+    character.
+    :return: decoded string.
+    """
     for row in table:
-        if row.endswith("\003"):
+        if row.endswith(b"\x03"):
             return row
     raise Exception("No ETX character-ending row in table.")
 
 
 def rle_encode(stream):
-    """Use run length encoding on a string."""
+    """Use run length encoding on a byte string."""
     output = b""
     streak = 1
-    prev = stream.read(1)
-    if not prev:
+    try:
+        prev = next(stream)
+    except StopIteration:
         return b""
     while True:
-        char = stream.read(1)
-        if not char:
+        try:
+            char = next(stream)
+        except StopIteration:
             break
         if char == prev and streak < 255:
             streak += 1
@@ -85,4 +93,5 @@ def rle_decode(stream):
         if not byte:
             break
         count = int.from_bytes(stream.read(1), byteorder="little")
-        yield byte * count
+        for i in range(count):
+            yield byte

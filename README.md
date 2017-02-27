@@ -18,7 +18,7 @@ Compression algorithm implementations in python
 
 * E.g. `python3 compress.py --lzw FILE`
 
-Original file is preserved. Compressed file is `output.lzw` and decompressed
+Original file is preserved. Compressed file is `output.lzw` and uncompressed
 file is `output`
 
 ### Running tests
