@@ -32,18 +32,17 @@ class TestBwt(unittest.TestCase):
             self.assertEqual(b"\x03b\x02a", encoded)
 
     def test_bwt_decode_empty(self):
-        decoded = bwt_decode(b"\x03\x02")
-        self.assertEqual(b"", decoded)
+        decoded = bwt_decode(bytes([i]) for i in b"\x03\x02")
+        self.assertEqual(b"", b"".join(decoded))
 
     def test_bwt_decode_short(self):
-        decoded = bwt_decode(b"\x03ilimo\x02yit k")
-        self.assertEqual(b"kyl toimii", decoded)
+        decoded = bwt_decode(bytes([i]) for i in b"\x03ilimo\x02yit k")
+        self.assertEqual(b"kyl toimii", b"".join(decoded))
 
     def test_bwt_enc_and_decode(self):
-        with io.BytesIO(b"kyl toimii") as stream:
-            encoded = b"".join(bwt_encode(stream))
-            decoded = bwt_decode(encoded)
-            self.assertEqual(b"kyl toimii", decoded)
+        string = b"kyl toimii"
+        encoded = bwt_encode(io.BytesIO(string))
+        self.assertEqual(string, b"".join(bwt_decode(encoded)))
 
     def test_create_table_empty(self):
         table = create_table("")
@@ -62,108 +61,101 @@ class TestBwt(unittest.TestCase):
         self.assertEqual(b"bar\x03", find_decoded(table))
 
     def test_rle_empty(self):
-        with io.BytesIO(b"") as empty_stream:
-            encoded = rle_encode(empty_stream)
-            self.assertEqual(b"", encoded)
+        input = b""
+        self.assertEqual(b"", rle_enc(input))
 
     def test_rle_encoding_one_char(self):
-        stream = b"a"
-        encoded = rle_encode(bytes([i]) for i in stream)
-        self.assertEqual(b"a\x01", encoded)
+        inp = b"a"
+        self.assertEqual(b"a\x01", rle_enc(inp))
 
     def test_rle_encoding_short(self):
-        stream = b"abcc"
-        encoded = rle_encode(bytes([i]) for i in stream)
-        self.assertEqual(b"a\x01b\x01c\x02", encoded)
+        inp = b"abcc"
+        self.assertEqual(b"a\x01b\x01c\x02", rle_enc(inp))
 
     def test_rle_encoding_short2(self):
-        stream = b"aabbccddeeeee"
-        encoded = rle_encode(bytes([i]) for i in stream)
-        self.assertEqual(b"a\x02b\x02c\x02d\x02e\x05", encoded)
+        inp = b"aabbccddeeeee"
+        self.assertEqual(b"a\x02b\x02c\x02d\x02e\x05", rle_enc(inp))
 
     def test_rle_encoding_long(self):
-        stream = b"a" * 100
-        encoded = rle_encode(bytes([i]) for i in stream)
-        self.assertEqual(b"a\x64", encoded)
+        inp = b"a" * 100
+        self.assertEqual(b"a\x64", rle_enc(inp))
 
     def test_rle_encoding_long2(self):
-        stream = b"a" * 256
-        encoded = rle_encode(bytes([i]) for i in stream)
-        self.assertEqual(b"a\xffa\x01", encoded)
+        inp = b"a" * 256
+        self.assertEqual(b"a\xffa\x01", rle_enc(inp))
 
     def test_rle_decoding_empty(self):
-        with io.BytesIO(b"") as stream:
-            decoded = b"".join(rle_decode(stream))
-            self.assertEqual(b"", decoded)
+        input = b""
+        expected = b""
+        self.assertEqual(expected, rle_dec(input))
 
     def test_rle_decoding_short(self):
-        with io.BytesIO(b"a\x01") as stream:
-            decoded = b"".join(rle_decode(stream))
-            self.assertEqual(b"a", decoded)
+        input = b"a\x01"
+        expected = b"a"
+        self.assertEqual(expected, rle_dec(input))
 
     def test_rle_decoding_short2(self):
-        with io.BytesIO(b"a\x02") as stream:
-            decoded = b"".join(rle_decode(stream))
-            self.assertEqual(b"aa", decoded)
+        input = b"a\x02"
+        expected = b"aa"
+        self.assertEqual(expected, rle_dec(input))
 
     def test_rle_decoding_short3(self):
-        with io.BytesIO(b"a\x02b\x01") as stream:
-            decoded = b"".join(rle_decode(stream))
-            self.assertEqual(b"aab", decoded)
+        input = b"a\x02b\x01"
+        expected = b"aab"
+        self.assertEqual(expected, rle_dec(input))
 
     def test_rle_decoding_long(self):
-        with io.BytesIO(b"a\xffa\xffc\x05") as stream:
-            decoded = b"".join(rle_decode(stream))
-            expected = b"a" * 510 + b"ccccc"
-            self.assertEqual(expected, decoded)
+        inp = b"a\xffa\xffc\x05"
+        expected = b"a" * 510 + b"ccccc"
+        self.assertEqual(expected, rle_dec(inp))
 
     def test_rle_enc_dec(self):
         inp = b"abbcc"
-        encoded = rle_encode(bytes([i]) for i in inp)
-        with io.BytesIO(encoded) as stream:
-            decoded = b"".join(rle_decode(stream))
-            self.assertEqual(inp, decoded)
+        self.assertEqual(inp, rle_enc_dec(inp))
 
     def test_rle_enc_dec2(self):
         inp = b"abc"
-        encoded = rle_encode(bytes([i]) for i in inp)
-        with io.BytesIO(encoded) as stream:
-            decoded = b"".join(rle_decode(stream))
-            self.assertEqual(inp, decoded)
+        self.assertEqual(inp, rle_enc_dec(inp))
 
     def test_rle_enc_dec3(self):
         inp = b"a" * 1000 + b"abcnewianwuibvureb"
-        encoded = rle_encode(bytes([i]) for i in inp)
-        with io.BytesIO(encoded) as stream:
-            decoded = b"".join(rle_decode(stream))
-            self.assertEqual(inp, decoded)
+        self.assertEqual(inp, rle_enc_dec(inp))
 
     def test_bwt_and_rle_short(self):
         inp = b"abc"
-        with io.BytesIO(inp) as input_stream:
-            bwt_encoded = bwt_encode(input_stream)
-            rle_encoded = rle_encode(bwt_encoded)
-            with io.BytesIO(rle_encoded) as rle_stream:
-                bwt_enc = b"".join(rle_decode(rle_stream))
-                bwt_decoded = bwt_decode(bwt_enc)
-                self.assertEqual(inp, bwt_decoded)
+        self.assertEqual(inp, bwt_rle_combined(inp))
 
     def test_bwt_and_rle_empty(self):
         inp = b""
-        with io.BytesIO(inp) as input_stream:
-            bwt_encoded = bwt_encode(input_stream)
-            rle_encoded = rle_encode(bwt_encoded)
-            with io.BytesIO(rle_encoded) as rle_stream:
-                bwt_enc = b"".join(rle_decode(rle_stream))
-                bwt_decoded = bwt_decode(bwt_enc)
-                self.assertEqual(inp, bwt_decoded)
+        self.assertEqual(inp, bwt_rle_combined(inp))
 
     def test_bwt_and_rle_medium(self):
         inp = b"aaaaaaaabbbcifjejiefieeeeeeeeee" + (b"p" * 10)
-        with io.BytesIO(inp) as input_stream:
-            bwt_encoded = bwt_encode(input_stream)
-            rle_encoded = rle_encode(bwt_encoded)
-            with io.BytesIO(rle_encoded) as rle_stream:
-                bwt_enc = b"".join(rle_decode(rle_stream))
-                bwt_decoded = bwt_decode(bwt_enc)
-                self.assertEqual(inp, bwt_decoded)
+        self.assertEqual(inp, bwt_rle_combined(inp))
+
+
+def bwt_rle_combined(bytes_input):
+    with io.BytesIO(bytes_input) as input_stream:
+        bwt_encoded = bwt_encode(input_stream)
+        rle_encoded = rle_encode(bwt_encoded)
+        with io.BytesIO(rle_encoded) as rle_stream:
+            bwt_enc = b"".join(rle_decode(rle_stream))
+            bwt_decoded = bwt_decode(bytes([i]) for i in bwt_enc)
+            return b"".join(bwt_decoded)
+
+
+def rle_enc_dec(bytes_input):
+    encoded = rle_encode(bytes([i]) for i in bytes_input)
+    with io.BytesIO(encoded) as stream:
+        decoded = b"".join(rle_decode(stream))
+        return decoded
+
+
+def rle_dec(bytes_input):
+    with io.BytesIO(bytes_input) as stream:
+        decoded = b"".join(rle_decode(stream))
+        return decoded
+
+
+def rle_enc(bytes_input):
+    return rle_encode(bytes([i]) for i in bytes_input)

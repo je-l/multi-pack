@@ -47,17 +47,17 @@ def bwt_compress(filename):
     """Compress with btw."""
     with open(filename, "rb") as in_stream:
         with open("output.bwt", "wb") as out_stream:
-            for chunk in rle_encode(bwt_encode(in_stream)):
-                out_stream.write(bytes([chunk]))
+            bwt_encoded = bwt_encode(in_stream)
+            rle_encoded = rle_encode(bwt_encoded)
+            out_stream.write(rle_encoded)
 
 
 def bwt_uncompress(filename):
     """Uncompress with bwt."""
     with open(filename, "rb") as in_stream:
         with open("output", "wb") as out_stream:
-            bwt_decoded = b"".join(rle_decode(in_stream))
-            chunk = bwt_decode(bwt_decoded)
-            out_stream.write(chunk)
+            for chunk in bwt_decode(rle_decode(in_stream)):
+                out_stream.write(chunk)
 
 
 def main():
@@ -111,11 +111,7 @@ def init_args():
     algo_choice.add_argument("--bwt",
                              help="use Burrows-Wheeler transform technique",
                              action="store_true")
-    args = arg.parse_args()
-    return args
+    return arg.parse_args()
 
-
-if __name__ == "__main__":
-    main()
 
 ARGS = init_args()
