@@ -14,12 +14,14 @@ Compression algorithm implementations in python
 `git clone`
 
 ### Usage
-* cd to project root
+* Cd to project root
 
 * E.g. `python3 compress.py --lzw FILE`
 
-Original file is preserved. Compressed file is `output.lzw` and uncompressed
-file is `output`
+* Lzw compressed files have `.lzw` suffix and bwt compressed files have `.bwt`
+  suffix
+
+* To uncompress files, the selected technique must match with the suffix
 
 ### Running tests
 
