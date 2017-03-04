@@ -4,6 +4,7 @@
 """BWT compression using run-length encoding."""
 
 import types
+from multipack.sorting import counting_sort
 
 CHUNK_SIZE = 10000
 
@@ -80,7 +81,7 @@ def create_indices(bwt_input):
     byte_start = [None] * 256
     indices = [None] * input_length
 
-    first_column = sorted(bwt_input)
+    first_column = counting_sort(bwt_input, 256)
     count = [0] * 256
     for byte in range(input_length):
         index = bwt_input[byte]
