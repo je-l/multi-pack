@@ -6,6 +6,7 @@
 
 class LinkedList:
     """Linked list implementation."""
+
     def __init__(self):
         self.first = None
         self.current = None
@@ -50,6 +51,7 @@ class LinkedList:
 
 class Node:
     """Node in linked list."""
+
     def __init__(self, key=None, value=None):
         self.key = key
         self.data = value
@@ -80,6 +82,7 @@ class HashTable:
     Hardcoded for 4096 keys. 6151 is the default table size as it's not close
     to a power of two and it's a prime number.
     """
+
     def __init__(self, size=6151):
         self.nodes = [None for i in range(size)]
         self.size = 0
@@ -87,7 +90,8 @@ class HashTable:
     def __setitem__(self, key, value):
         """Add new key-value pair to the hash table.
         :param key: the key we want to target.
-        :param value: value for the key."""
+        :param value: value for the key.
+        """
         node_hash = self.hash(key)
         if self.nodes[node_hash] is None:
             self.nodes[node_hash] = LinkedList()
@@ -106,7 +110,8 @@ class HashTable:
     def __getitem__(self, item):
         """Get value for specified key.
         :param item: key in the hash table.
-        :return: value associated with the key."""
+        :return: value associated with the key.
+        """
         if item not in self:
             raise KeyError('key "{}" not in hash table.'.format(item))
         hashed = self.hash(item)

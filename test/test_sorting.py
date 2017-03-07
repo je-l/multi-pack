@@ -31,3 +31,8 @@ class TestSorting(unittest.TestCase):
         arr = b"\x00\x05\x02\x01"
         expected = b"\x00\x01\x02\x05"
         self.assertEqual(expected, counting_sort(arr, 6))
+
+    def test_bytes2(self):
+        arr = b"a\x00bc\x02"
+        expected = b"\x00\x02abc"
+        self.assertEqual(expected, counting_sort(arr, 256))
