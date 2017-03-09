@@ -30,11 +30,11 @@ def create_table(string):
     :return: Sorted list of rotations. There is len(string) different rotations
     altogether.
     """
-    table = []
+    table = [None] * len(string)
     for index, _ in enumerate(string):
         start = string[index:]
         end = string[:index]
-        table.append(start + end)
+        table[-index] = (start + end)
     merge_sort(table)
     return table
 
@@ -44,13 +44,7 @@ def bwt_decode(enc_input):
     :param enc_input: byte generator of encoded BWT data.
     :return: byte generator of decoded data. The yielded chunks are very large.
     """
-    next_bytes = b""
-    for i in range(CHUNK_SIZE + 2):
-        try:
-            next_bytes += next(enc_input)
-        except StopIteration:
-            break
-    input_chunk = next_bytes
+    input_chunk = read_chunk(enc_input)
 
     while input_chunk:
         input_length = len(input_chunk)
@@ -62,13 +56,21 @@ def bwt_decode(enc_input):
             output[input_length - i - 1] = next_byte
             local_index = byte_start[next_byte] + indices[local_index]
         yield bytes(output).rstrip(b"\x03").strip(b"\x02")
-        next_bytes = b""
-        for byte in range(CHUNK_SIZE + 2):
-            try:
-                next_bytes += next(enc_input)
-            except StopIteration:
-                break
-        input_chunk = next_bytes
+        input_chunk = read_chunk(enc_input)
+
+
+def read_chunk(source):
+    """Read chunk of data from generator and return it.
+    :param source: source generator for the bytes.
+    :return: chunk of bwt encoded data.
+    """
+    next_bytes = b""
+    for byte in range(CHUNK_SIZE + 2):
+        try:
+            next_bytes += next(source)
+        except StopIteration:
+            break
+    return next_bytes
 
 
 def create_indices(bwt_input):

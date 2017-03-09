@@ -151,3 +151,41 @@ class HashTable:
                 continue
             text += str(self.nodes[i]) + "\n"
         return text
+
+
+class DynamicArray:
+    """Dynamic array. Default size is 16."""
+
+    def __init__(self):
+        self.array = [None] * 16
+        self.size = 16
+        self.index = 0
+
+    def __getitem__(self, index):
+        return self.array[index]
+
+    def __setitem__(self, index, value):
+        while index >= self.size:
+            self.double_capacity()
+        self.array[index] = value
+        self.index = index + 1
+
+    def __len__(self):
+        return self.index
+
+    def append(self, value):
+        """Add new value to end of the dynamic array.
+        :param value: New value to be added.
+        """
+        if self.index == self.size:
+            self.double_capacity()
+        self.array[self.index] = value
+        self.index += 1
+
+    def double_capacity(self):
+        """Double arrays size."""
+        temp = [None] * self.size * 2
+        for i in range(self.index):
+            temp[i] = self.array[i]
+        self.array = temp
+        self.size *= 2

@@ -3,7 +3,7 @@
 
 """Lempel–Ziv–Welch compression algorithm example, with 4096 dictionary size."""
 
-from multipack.datastructures import HashTable
+from multipack.datastructures import HashTable, DynamicArray
 
 
 class Lzw:
@@ -59,7 +59,7 @@ class Lzw:
 
     def init_uncompress_dict(self):
         """Initialize dictionary for uncompression"""
-        self.dictionary = []
+        self.dictionary = DynamicArray()
         for i in range(256):
             self.dictionary.append(bytes([i]))
 

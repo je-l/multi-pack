@@ -4,7 +4,7 @@
 """Tests for data structures."""
 
 import unittest
-from multipack.datastructures import Node, LinkedList, HashTable
+from multipack.datastructures import Node, LinkedList, HashTable, DynamicArray
 
 
 class TestDatastructures(unittest.TestCase):
@@ -96,3 +96,24 @@ class TestDatastructures(unittest.TestCase):
         emoji_string = "$affs🐲d"
         hash_table[emoji_string] = -1
         self.assertTrue(emoji_string in hash_table)
+
+    def test_dyn_array_short(self):
+        dyn_arr = DynamicArray()
+        dyn_arr.append(2)
+        self.assertEqual(2, dyn_arr[0])
+
+    def test_dyn_array_medium(self):
+        dyn_arr = DynamicArray()
+        for i in range(30):
+            dyn_arr.append(i)
+        self.assertEqual(29, dyn_arr[29])
+
+    def test_dyn_array_len(self):
+        dyn_arr = DynamicArray()
+        self.assertEqual(0, len(dyn_arr))
+
+    def test_dyn_array_len_2(self):
+        dyn_arr = DynamicArray()
+        for i in range(33):
+            dyn_arr.append("k")
+        self.assertEqual(33, len(dyn_arr))
