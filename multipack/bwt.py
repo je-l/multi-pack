@@ -3,8 +3,7 @@
 
 """BWT compression using run-length encoding."""
 
-import types
-from multipack.sorting import counting_sort
+from multipack.sorting import counting_sorted, merge_sort
 
 CHUNK_SIZE = 10000
 
@@ -36,7 +35,8 @@ def create_table(string):
         start = string[index:]
         end = string[:index]
         table.append(start + end)
-    return sorted(table)
+    merge_sort(table)
+    return table
 
 
 def bwt_decode(enc_input):
@@ -44,7 +44,6 @@ def bwt_decode(enc_input):
     :param enc_input: byte generator of encoded BWT data.
     :return: byte generator of decoded data. The yielded chunks are very large.
     """
-    assert isinstance(enc_input, types.GeneratorType)
     next_bytes = b""
     for i in range(CHUNK_SIZE + 2):
         try:
@@ -81,7 +80,7 @@ def create_indices(bwt_input):
     byte_start = [None] * 256
     indices = [None] * input_length
 
-    first_column = counting_sort(bwt_input, 256)
+    first_column = counting_sorted(bwt_input, 256)
     count = [0] * 256
     for byte in range(input_length):
         index = bwt_input[byte]
@@ -111,8 +110,6 @@ def rle_encode(byte_arr):
     :param byte_arr: byte generator.
     :return: byte string of encoded data.
     """
-    assert isinstance(byte_arr, types.GeneratorType)
-
     output = b""
     streak = 1
     try:
@@ -132,7 +129,6 @@ def rle_encode(byte_arr):
         prev = char
 
     output += prev + bytes([streak])
-    assert isinstance(output, bytes)
     return output
 
 
