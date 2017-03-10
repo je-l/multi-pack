@@ -220,7 +220,7 @@
 <p id="t3" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t4" class="stm run hide_run"><span class="str">"""Lempel&#8211;Ziv&#8211;Welch compression algorithm example, with 4096 dictionary size."""</span><span class="strut">&nbsp;</span></p>
 <p id="t5" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t6" class="stm run hide_run"><span class="key">from</span> <span class="nam">multipack</span><span class="op">.</span><span class="nam">datastructures</span> <span class="key">import</span> <span class="nam">HashTable</span><span class="strut">&nbsp;</span></p>
+<p id="t6" class="stm run hide_run"><span class="key">from</span> <span class="nam">multipack</span><span class="op">.</span><span class="nam">datastructures</span> <span class="key">import</span> <span class="nam">HashTable</span><span class="op">,</span> <span class="nam">DynamicArray</span><span class="strut">&nbsp;</span></p>
 <p id="t7" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t8" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t9" class="stm run hide_run"><span class="key">class</span> <span class="nam">Lzw</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
@@ -234,7 +234,7 @@
 <p id="t17" class="stm run hide_run">        <span class="nam">self</span><span class="op">.</span><span class="nam">max</span> <span class="op">=</span> <span class="nam">dict_size</span><span class="strut">&nbsp;</span></p>
 <p id="t18" class="stm run hide_run">        <span class="nam">self</span><span class="op">.</span><span class="nam">init_dict</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t19" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t20" class="stm run hide_run">    <span class="key">def</span> <span class="nam">dict_add</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">dict_string</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t20" class="stm run hide_run">    <span class="key">def</span> <span class="nam">_dict_add</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">dict_string</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t21" class="pln">        <span class="str">"""Add new string to dictionary, and increment the index. Key is a</span><span class="strut">&nbsp;</span></p>
 <p id="t22" class="pln"><span class="str">        string and value is integer index.</span><span class="strut">&nbsp;</span></p>
 <p id="t23" class="pln"><span class="str">        :param dict_string: new string for the dictionary.</span><span class="strut">&nbsp;</span></p>
@@ -246,7 +246,7 @@
 <p id="t29" class="pln">        <span class="str">"""Initialize the dictionary with 256 characters."""</span><span class="strut">&nbsp;</span></p>
 <p id="t30" class="stm run hide_run">        <span class="nam">self</span><span class="op">.</span><span class="nam">dictionary</span> <span class="op">=</span> <span class="nam">HashTable</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t31" class="stm run hide_run">        <span class="key">for</span> <span class="nam">i</span> <span class="key">in</span> <span class="nam">range</span><span class="op">(</span><span class="num">256</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
-<p id="t32" class="stm run hide_run">            <span class="nam">self</span><span class="op">.</span><span class="nam">dict_add</span><span class="op">(</span><span class="nam">bytes</span><span class="op">(</span><span class="op">[</span><span class="nam">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t32" class="stm run hide_run">            <span class="nam">self</span><span class="op">.</span><span class="nam">_dict_add</span><span class="op">(</span><span class="nam">bytes</span><span class="op">(</span><span class="op">[</span><span class="nam">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t33" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t34" class="stm run hide_run">    <span class="key">def</span> <span class="nam">compress</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t35" class="pln">        <span class="str">"""Compress the input stream into 12-bit indexes.</span><span class="strut">&nbsp;</span></p>
@@ -255,7 +255,7 @@
 <p id="t38" class="stm run hide_run">        <span class="nam">indices</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">lzw</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t39" class="stm run hide_run">        <span class="key">for</span> <span class="nam">first_int</span> <span class="key">in</span> <span class="nam">indices</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t40" class="stm run hide_run">            <span class="nam">second_int</span> <span class="op">=</span> <span class="nam">next</span><span class="op">(</span><span class="nam">indices</span><span class="op">,</span> <span class="key">None</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
-<p id="t41" class="stm run hide_run">            <span class="key">for</span> <span class="nam">byte</span> <span class="key">in</span> <span class="nam">int12_to_int8</span><span class="op">(</span><span class="nam">first_int</span><span class="op">,</span> <span class="nam">second_int</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t41" class="stm run hide_run">            <span class="key">for</span> <span class="nam">byte</span> <span class="key">in</span> <span class="nam">_int12_to_int8</span><span class="op">(</span><span class="nam">first_int</span><span class="op">,</span> <span class="nam">second_int</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t42" class="stm run hide_run">                <span class="key">yield</span> <span class="nam">byte</span><span class="strut">&nbsp;</span></p>
 <p id="t43" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t44" class="stm run hide_run">    <span class="key">def</span> <span class="nam">lzw</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
@@ -269,14 +269,14 @@
 <p id="t52" class="pln">            <span class="key">else</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t53" class="stm run hide_run">                <span class="key">yield</span> <span class="nam">self</span><span class="op">.</span><span class="nam">dictionary</span><span class="op">[</span><span class="nam">self</span><span class="op">.</span><span class="nam">str</span><span class="op">]</span><span class="strut">&nbsp;</span></p>
 <p id="t54" class="stm run hide_run">                <span class="key">if</span> <span class="nam">len</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">dictionary</span><span class="op">)</span> <span class="op">&lt;</span> <span class="nam">self</span><span class="op">.</span><span class="nam">max</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
-<p id="t55" class="stm run hide_run">                    <span class="nam">self</span><span class="op">.</span><span class="nam">dict_add</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">str</span> <span class="op">+</span> <span class="nam">char</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t55" class="stm run hide_run">                    <span class="nam">self</span><span class="op">.</span><span class="nam">_dict_add</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">str</span> <span class="op">+</span> <span class="nam">char</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t56" class="stm run hide_run">                <span class="nam">self</span><span class="op">.</span><span class="nam">str</span> <span class="op">=</span> <span class="nam">char</span><span class="strut">&nbsp;</span></p>
 <p id="t57" class="stm run hide_run">            <span class="nam">char</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">stream</span><span class="op">.</span><span class="nam">read</span><span class="op">(</span><span class="num">1</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t58" class="stm run hide_run">        <span class="key">yield</span> <span class="nam">self</span><span class="op">.</span><span class="nam">dictionary</span><span class="op">[</span><span class="nam">self</span><span class="op">.</span><span class="nam">str</span><span class="op">]</span><span class="strut">&nbsp;</span></p>
 <p id="t59" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t60" class="stm run hide_run">    <span class="key">def</span> <span class="nam">init_uncompress_dict</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t60" class="stm run hide_run">    <span class="key">def</span> <span class="nam">_init_uncompress_dict</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t61" class="pln">        <span class="str">"""Initialize dictionary for uncompression"""</span><span class="strut">&nbsp;</span></p>
-<p id="t62" class="stm run hide_run">        <span class="nam">self</span><span class="op">.</span><span class="nam">dictionary</span> <span class="op">=</span> <span class="op">[</span><span class="op">]</span><span class="strut">&nbsp;</span></p>
+<p id="t62" class="stm run hide_run">        <span class="nam">self</span><span class="op">.</span><span class="nam">dictionary</span> <span class="op">=</span> <span class="nam">DynamicArray</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t63" class="stm run hide_run">        <span class="key">for</span> <span class="nam">i</span> <span class="key">in</span> <span class="nam">range</span><span class="op">(</span><span class="num">256</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t64" class="stm run hide_run">            <span class="nam">self</span><span class="op">.</span><span class="nam">dictionary</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">bytes</span><span class="op">(</span><span class="op">[</span><span class="nam">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t65" class="pln"><span class="strut">&nbsp;</span></p>
@@ -284,8 +284,8 @@
 <p id="t67" class="pln">        <span class="str">"""Uncompress with lzw.</span><span class="strut">&nbsp;</span></p>
 <p id="t68" class="pln"><span class="str">        :return: Generator for the uncompressed bytes.</span><span class="strut">&nbsp;</span></p>
 <p id="t69" class="pln"><span class="str">        """</span><span class="strut">&nbsp;</span></p>
-<p id="t70" class="stm run hide_run">        <span class="nam">self</span><span class="op">.</span><span class="nam">init_uncompress_dict</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
-<p id="t71" class="stm run hide_run">        <span class="nam">deserializer</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">deserializer</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t70" class="stm run hide_run">        <span class="nam">self</span><span class="op">.</span><span class="nam">_init_uncompress_dict</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t71" class="stm run hide_run">        <span class="nam">deserializer</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_deserializer</span><span class="op">(</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t72" class="stm run hide_run">        <span class="nam">prev_index</span> <span class="op">=</span> <span class="nam">next</span><span class="op">(</span><span class="nam">deserializer</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t73" class="stm run hide_run">        <span class="nam">entry</span> <span class="op">=</span> <span class="str">b""</span><span class="strut">&nbsp;</span></p>
 <p id="t74" class="stm run hide_run">        <span class="key">yield</span> <span class="nam">self</span><span class="op">.</span><span class="nam">dictionary</span><span class="op">[</span><span class="nam">prev_index</span><span class="op">]</span><span class="strut">&nbsp;</span></p>
@@ -302,7 +302,7 @@
 <p id="t85" class="stm run hide_run">                <span class="nam">self</span><span class="op">.</span><span class="nam">dictionary</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">new</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t86" class="stm run hide_run">            <span class="nam">prev_index</span> <span class="op">=</span> <span class="nam">index</span><span class="strut">&nbsp;</span></p>
 <p id="t87" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t88" class="stm run hide_run">    <span class="key">def</span> <span class="nam">deserializer</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t88" class="stm run hide_run">    <span class="key">def</span> <span class="nam">_deserializer</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t89" class="pln">        <span class="str">"""Read the binary stream until there is no more characters.</span><span class="strut">&nbsp;</span></p>
 <p id="t90" class="pln"><span class="str">        :return: Indices for the dictionary.</span><span class="strut">&nbsp;</span></p>
 <p id="t91" class="pln"><span class="str">        """</span><span class="strut">&nbsp;</span></p>
@@ -317,16 +317,16 @@
 <p id="t100" class="stm run hide_run">            <span class="nam">int_8_2</span> <span class="op">=</span> <span class="nam">int</span><span class="op">.</span><span class="nam">from_bytes</span><span class="op">(</span><span class="nam">byte_2</span><span class="op">,</span> <span class="nam">byteorder</span><span class="op">=</span><span class="str">"little"</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t101" class="stm run hide_run">            <span class="nam">int_8_3</span> <span class="op">=</span> <span class="nam">int</span><span class="op">.</span><span class="nam">from_bytes</span><span class="op">(</span><span class="nam">byte_3</span><span class="op">,</span> <span class="nam">byteorder</span><span class="op">=</span><span class="str">"little"</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t102" class="stm run hide_run">            <span class="key">if</span> <span class="key">not</span> <span class="nam">byte_3</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
-<p id="t103" class="stm mis">                <span class="nam">int_1</span> <span class="op">=</span> <span class="nam">int8_to_int12</span><span class="op">(</span><span class="nam">int_8_1</span><span class="op">,</span> <span class="nam">int_8_2</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t103" class="stm mis">                <span class="nam">int_1</span> <span class="op">=</span> <span class="nam">_int8_to_int12</span><span class="op">(</span><span class="nam">int_8_1</span><span class="op">,</span> <span class="nam">int_8_2</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t104" class="stm mis">                <span class="key">yield</span> <span class="nam">int_1</span><span class="strut">&nbsp;</span></p>
 <p id="t105" class="stm mis">                <span class="key">continue</span><span class="strut">&nbsp;</span></p>
 <p id="t106" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t107" class="stm run hide_run">            <span class="nam">int_1</span><span class="op">,</span> <span class="nam">int_2</span> <span class="op">=</span> <span class="nam">int8_to_int12</span><span class="op">(</span><span class="nam">int_8_1</span><span class="op">,</span> <span class="nam">int_8_2</span><span class="op">,</span> <span class="nam">int_8_3</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
+<p id="t107" class="stm run hide_run">            <span class="nam">int_1</span><span class="op">,</span> <span class="nam">int_2</span> <span class="op">=</span> <span class="nam">_int8_to_int12</span><span class="op">(</span><span class="nam">int_8_1</span><span class="op">,</span> <span class="nam">int_8_2</span><span class="op">,</span> <span class="nam">int_8_3</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t108" class="stm run hide_run">            <span class="key">yield</span> <span class="nam">int_1</span><span class="strut">&nbsp;</span></p>
 <p id="t109" class="stm run hide_run">            <span class="key">yield</span> <span class="nam">int_2</span><span class="strut">&nbsp;</span></p>
 <p id="t110" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t111" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t112" class="stm run hide_run"><span class="key">def</span> <span class="nam">int12_to_int8</span><span class="op">(</span><span class="nam">first</span><span class="op">,</span> <span class="nam">second</span><span class="op">=</span><span class="key">None</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t112" class="stm run hide_run"><span class="key">def</span> <span class="nam">_int12_to_int8</span><span class="op">(</span><span class="nam">first</span><span class="op">,</span> <span class="nam">second</span><span class="op">=</span><span class="key">None</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t113" class="pln">    <span class="str">"""Convert two 12-bit integers to three 8-bit integers for serialization.</span><span class="strut">&nbsp;</span></p>
 <p id="t114" class="pln"><span class="str">    :param first: First 12-bit integer for conversion.</span><span class="strut">&nbsp;</span></p>
 <p id="t115" class="pln"><span class="str">    :param second: Second 12-bit integer for conversion.</span><span class="strut">&nbsp;</span></p>
@@ -345,7 +345,7 @@
 <p id="t128" class="stm run hide_run">    <span class="key">return</span> <span class="nam">byte_1</span><span class="op">,</span> <span class="nam">byte_2</span><span class="op">,</span> <span class="nam">byte_3</span><span class="strut">&nbsp;</span></p>
 <p id="t129" class="pln"><span class="strut">&nbsp;</span></p>
 <p id="t130" class="pln"><span class="strut">&nbsp;</span></p>
-<p id="t131" class="stm run hide_run"><span class="key">def</span> <span class="nam">int8_to_int12</span><span class="op">(</span><span class="nam">first</span><span class="op">,</span> <span class="nam">second</span><span class="op">,</span> <span class="nam">third</span><span class="op">=</span><span class="key">None</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
+<p id="t131" class="stm run hide_run"><span class="key">def</span> <span class="nam">_int8_to_int12</span><span class="op">(</span><span class="nam">first</span><span class="op">,</span> <span class="nam">second</span><span class="op">,</span> <span class="nam">third</span><span class="op">=</span><span class="key">None</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t132" class="pln">    <span class="str">"""Convert three or two bytes to 12-bit integers."""</span><span class="strut">&nbsp;</span></p>
 <p id="t133" class="stm run hide_run">    <span class="key">if</span> <span class="nam">first</span> <span class="op">></span> <span class="num">256</span> <span class="key">or</span> <span class="nam">second</span> <span class="op">></span> <span class="num">256</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t134" class="stm mis">        <span class="key">raise</span> <span class="nam">Exception</span><span class="op">(</span><span class="str">"More than 8 bits"</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
@@ -370,7 +370,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.3.4</a>,
-            created at 2017-03-01 17:30
+            created at 2017-03-10 21:42
         </p>
     </div>
 </div>

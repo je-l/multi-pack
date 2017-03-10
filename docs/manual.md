@@ -7,7 +7,7 @@ files. **The BWT is only for text files.**
 It is possible to compress using both BWT and LZW. But only by using BWT first.
 
 The program is completely portable, so there is no setup script. Add an alias
-to .bashrc so that the program can be run everywhere:
+to .bashrc so that the program can be run more conveniently:
 
 `alias multi-pack="python3 ~/path/to/repo/compress.py"`
 
