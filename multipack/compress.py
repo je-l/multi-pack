@@ -13,7 +13,7 @@ from multipack.bwt import bwt_encode, bwt_decode, rle_encode, rle_decode
 
 
 def lzw_compress(filename):
-    """Compress text stream.
+    """Compress file with lzw.
     :param filename: File name for the compression.
     """
     with open(filename, "rb") as in_stream:
@@ -39,7 +39,7 @@ def lzw_uncompress(file_name):
 
 
 def bwt_compress(filename):
-    """Compress with btw."""
+    """Compress with bwt."""
     with open(filename, "rb") as in_stream:
         with open(filename + ".bwt", "wb") as out_stream:
             bwt_encoded = bwt_encode(in_stream)
@@ -75,7 +75,9 @@ def main():
 
 
 def cli_compress():
-    """Compress file with either LZW or BWT techniques."""
+    """Compress file with either LZW or BWT techniques, and print statistics
+    if verbose argument is given.
+    """
     original_size = os.stat(ARGS.filename).st_size
     if ARGS.verbose:
         print("Original size: {:.1f} KB".format(original_size / 1024))
@@ -97,7 +99,7 @@ def cli_compress():
 
 
 def cli_uncompress():
-    """Uncompress."""
+    """Uncompress the given file."""
     if ARGS.lzw:
         lzw_uncompress(ARGS.filename)
     elif ARGS.bwt:
@@ -109,13 +111,16 @@ def init_args():
     arg = argparse.ArgumentParser(description="Compress and uncompress files "
                                               "with LZW or BWT technique.")
     arg.add_argument("-v", "--verbose", help="be verbose", action="store_true")
+
     algo_choice = arg.add_mutually_exclusive_group(required=True)
     arg.add_argument("filename",
                      metavar="FILE",
                      help="filename for the target file")
+
     algo_choice.add_argument("--lzw",
                              help="use Lempel-Ziv-Welch compression technique",
                              action="store_true")
+
     algo_choice.add_argument("--bwt",
                              help="use Burrows-Wheeler transform technique",
                              action="store_true")

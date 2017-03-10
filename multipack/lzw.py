@@ -17,7 +17,7 @@ class Lzw:
         self.max = dict_size
         self.init_dict()
 
-    def dict_add(self, dict_string):
+    def _dict_add(self, dict_string):
         """Add new string to dictionary, and increment the index. Key is a
         string and value is integer index.
         :param dict_string: new string for the dictionary.
@@ -29,7 +29,7 @@ class Lzw:
         """Initialize the dictionary with 256 characters."""
         self.dictionary = HashTable()
         for i in range(256):
-            self.dict_add(bytes([i]))
+            self._dict_add(bytes([i]))
 
     def compress(self):
         """Compress the input stream into 12-bit indexes.
@@ -38,7 +38,7 @@ class Lzw:
         indices = self.lzw()
         for first_int in indices:
             second_int = next(indices, None)
-            for byte in int12_to_int8(first_int, second_int):
+            for byte in _int12_to_int8(first_int, second_int):
                 yield byte
 
     def lzw(self):
@@ -52,12 +52,12 @@ class Lzw:
             else:
                 yield self.dictionary[self.str]
                 if len(self.dictionary) < self.max:
-                    self.dict_add(self.str + char)
+                    self._dict_add(self.str + char)
                 self.str = char
             char = self.stream.read(1)
         yield self.dictionary[self.str]
 
-    def init_uncompress_dict(self):
+    def _init_uncompress_dict(self):
         """Initialize dictionary for uncompression"""
         self.dictionary = DynamicArray()
         for i in range(256):
@@ -67,8 +67,8 @@ class Lzw:
         """Uncompress with lzw.
         :return: Generator for the uncompressed bytes.
         """
-        self.init_uncompress_dict()
-        deserializer = self.deserializer()
+        self._init_uncompress_dict()
+        deserializer = self._deserializer()
         prev_index = next(deserializer)
         entry = b""
         yield self.dictionary[prev_index]
@@ -85,7 +85,7 @@ class Lzw:
                 self.dictionary.append(new)
             prev_index = index
 
-    def deserializer(self):
+    def _deserializer(self):
         """Read the binary stream until there is no more characters.
         :return: Indices for the dictionary.
         """
@@ -100,16 +100,16 @@ class Lzw:
             int_8_2 = int.from_bytes(byte_2, byteorder="little")
             int_8_3 = int.from_bytes(byte_3, byteorder="little")
             if not byte_3:
-                int_1 = int8_to_int12(int_8_1, int_8_2)
+                int_1 = _int8_to_int12(int_8_1, int_8_2)
                 yield int_1
                 continue
 
-            int_1, int_2 = int8_to_int12(int_8_1, int_8_2, int_8_3)
+            int_1, int_2 = _int8_to_int12(int_8_1, int_8_2, int_8_3)
             yield int_1
             yield int_2
 
 
-def int12_to_int8(first, second=None):
+def _int12_to_int8(first, second=None):
     """Convert two 12-bit integers to three 8-bit integers for serialization.
     :param first: First 12-bit integer for conversion.
     :param second: Second 12-bit integer for conversion.
@@ -128,7 +128,7 @@ def int12_to_int8(first, second=None):
     return byte_1, byte_2, byte_3
 
 
-def int8_to_int12(first, second, third=None):
+def _int8_to_int12(first, second, third=None):
     """Convert three or two bytes to 12-bit integers."""
     if first > 256 or second > 256:
         raise Exception("More than 8 bits")

@@ -7,6 +7,7 @@ import unittest
 import io
 
 from multipack.bwt import *
+from multipack.bwt import _create_table, _find_decoded
 
 
 class TestBwt(unittest.TestCase):
@@ -45,20 +46,20 @@ class TestBwt(unittest.TestCase):
         self.assertEqual(string, b"".join(bwt_decode(encoded)))
 
     def test_create_table_empty(self):
-        table = create_table("")
+        table = _create_table("")
         self.assertEqual([], table)
 
     def test_create_table_short(self):
-        table = create_table("a")
+        table = _create_table("a")
         self.assertEqual(["a"], table)
 
     def test_create_table_short_2(self):
-        table = create_table("abcde")
+        table = _create_table("abcde")
         self.assertEqual(["abcde", "bcdea", "cdeab", "deabc", "eabcd"], table)
 
     def test_find_etx(self):
         table = [b"fo\x02o", b"bar\x03"]
-        self.assertEqual(b"bar\x03", find_decoded(table))
+        self.assertEqual(b"bar\x03", _find_decoded(table))
 
     def test_rle_empty(self):
         input = b""

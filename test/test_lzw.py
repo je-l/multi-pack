@@ -10,7 +10,9 @@ import multipack.lzw as lzw
 
 
 class TestLzw(unittest.TestCase):
-    def setUp(self):
+
+    @classmethod
+    def setUpClass(cls):
         with open("LICENSE", "rb") as in_stream:
             lzw_compressor = lzw.Lzw(in_stream)
             with open("test_output.lzw", "wb") as out_stream:
@@ -55,76 +57,76 @@ class TestLzw(unittest.TestCase):
                     outfile.write(byte)
 
     def test_bit_convert_zeros(self):
-        byte_1, byte_2, byte_3 = lzw.int12_to_int8(0, 0)
+        byte_1, byte_2, byte_3 = lzw._int12_to_int8(0, 0)
         self.assertEqual(byte_1, 0b0)
         self.assertEqual(byte_2, 0b0)
         self.assertEqual(byte_3, 0b0)
 
     def test_bit_convert_small(self):
-        byte_1, byte_2, byte_3 = lzw.int12_to_int8(1, 1)
+        byte_1, byte_2, byte_3 = lzw._int12_to_int8(1, 1)
         self.assertEqual(byte_1, 0b0)
         self.assertEqual(byte_2, 0b10000)
         self.assertEqual(byte_3, 0b1)
 
     def test_bit_convert_smallish(self):
-        byte_1, byte_2, byte_3 = lzw.int12_to_int8(8, 8)
+        byte_1, byte_2, byte_3 = lzw._int12_to_int8(8, 8)
         self.assertEqual(byte_1, 0b0)
         self.assertEqual(byte_2, 0b10000000)
         self.assertEqual(byte_3, 0b1000)
 
     def test_bit_convert_almost_max(self):
-        byte_1, byte_2, byte_3 = lzw.int12_to_int8(4094, 4094)
+        byte_1, byte_2, byte_3 = lzw._int12_to_int8(4094, 4094)
         self.assertEqual(byte_1, 0b11111111)
         self.assertEqual(byte_2, 0b11101111)
         self.assertEqual(byte_3, 0b11111110)
 
     def test_bit_convert_max(self):
-        byte_1, byte_2, byte_3 = lzw.int12_to_int8(4095, 4095)
+        byte_1, byte_2, byte_3 = lzw._int12_to_int8(4095, 4095)
         self.assertEqual(byte_1, 0b11111111)
         self.assertEqual(byte_2, 0b11111111)
         self.assertEqual(byte_3, 0b11111111)
 
     def test_bit_convert_different_indexes(self):
-        byte_1, byte_2, byte_3 = lzw.int12_to_int8(55, 4000)
+        byte_1, byte_2, byte_3 = lzw._int12_to_int8(55, 4000)
         self.assertEqual(byte_1, 0b11)
         self.assertEqual(byte_2, 0b1111111)
         self.assertEqual(byte_3, 0b10100000)
 
     def test_bit_convert_one_int(self):
-        byte_1, byte_2 = lzw.int12_to_int8(1)
+        byte_1, byte_2 = lzw._int12_to_int8(1)
         self.assertEqual(byte_1, 0b0)
         self.assertEqual(byte_2, 0b10000)
 
     def test_bit_convert_one_int_max(self):
-        byte_1, byte_2 = lzw.int12_to_int8(4095)
+        byte_1, byte_2 = lzw._int12_to_int8(4095)
         self.assertEqual(byte_1, 0b11111111)
         self.assertEqual(byte_2, 0b11110000)
 
     def test_bit_convert_one_int_min(self):
-        byte_1, byte_2 = lzw.int12_to_int8(0)
+        byte_1, byte_2 = lzw._int12_to_int8(0)
         self.assertEqual(byte_1, 0b0)
         self.assertEqual(byte_2, 0b0)
 
     def test_bit_convert_one_int_almost_max(self):
-        byte_1, byte_2 = lzw.int12_to_int8(4093)
+        byte_1, byte_2 = lzw._int12_to_int8(4093)
         self.assertEqual(byte_1, 0b11111111)
         self.assertEqual(byte_2, 0b11010000)
 
     def test_12bit_convert_minimum(self):
-        byte_1 = lzw.int8_to_int12(0b0, 0b0)
+        byte_1 = lzw._int8_to_int12(0b0, 0b0)
         self.assertEqual(byte_1, 0b0)
 
     def test_12bit_convert_medium(self):
-        byte_1, byte_2 = lzw.int8_to_int12(0b10, 0b10, 0b10)
+        byte_1, byte_2 = lzw._int8_to_int12(0b10, 0b10, 0b10)
         self.assertEqual(byte_1, 0b100000)
         self.assertEqual(byte_2, 0b1000000010)
 
     def test_12bit_convert_maximum(self):
-        byte_1, byte_2 = lzw.int8_to_int12(0b11111111, 0b11111111, 0b11111111)
+        byte_1, byte_2 = lzw._int8_to_int12(0b11111111, 0b11111111, 0b11111111)
         self.assertEqual(byte_1, 0b111111111111)
         self.assertEqual(byte_2, 0b111111111111)
 
     def test_12bit_convert_almost_maximum(self):
-        byte_1, byte_2 = lzw.int8_to_int12(0b1111111, 0b1111111, 0b1111111)
+        byte_1, byte_2 = lzw._int8_to_int12(0b1111111, 0b1111111, 0b1111111)
         self.assertEqual(byte_1, 0b11111110111)
         self.assertEqual(byte_2, 0b111101111111)

@@ -79,12 +79,12 @@ class Node:
 class HashTable:
     """Hash table with linked list collision handling.
 
-    Hardcoded for 4096 keys. 6151 is the default table size as it's not close
-    to a power of two and it's a prime number.
+    6151 is the default table size as it's not close to a power of two and it's
+    a prime number.
     """
 
     def __init__(self, size=6151):
-        self.nodes = [None for i in range(size)]
+        self.nodes = [None] * size
         self.size = 0
 
     def __setitem__(self, key, value):
@@ -183,7 +183,7 @@ class DynamicArray:
         self.index += 1
 
     def double_capacity(self):
-        """Double arrays size."""
+        """Double the size of the array."""
         temp = [None] * self.size * 2
         for i in range(self.index):
             temp[i] = self.array[i]

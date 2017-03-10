@@ -18,13 +18,13 @@ def bwt_encode(stream):
         yield b"\x03\x02"
     while chunk:
         chunk = b"\x02" + chunk + b"\x03"
-        table = create_table(chunk)
+        table = _create_table(chunk)
         for rotation in table:
             yield rotation[-1:]
         chunk = stream.read(CHUNK_SIZE)
 
 
-def create_table(string):
+def _create_table(string):
     """Create the table of different rotations.
     :param string: base for the different rotations.
     :return: Sorted list of rotations. There is len(string) different rotations
@@ -44,11 +44,11 @@ def bwt_decode(enc_input):
     :param enc_input: byte generator of encoded BWT data.
     :return: byte generator of decoded data. The yielded chunks are very large.
     """
-    input_chunk = read_chunk(enc_input)
+    input_chunk = _read_chunk(enc_input)
 
     while input_chunk:
         input_length = len(input_chunk)
-        byte_start, indices = create_indices(input_chunk)
+        byte_start, indices = _create_indices(input_chunk)
         local_index = input_chunk.index(b"\x03")
         output = [b""] * input_length
         for i in range(input_length):
@@ -56,10 +56,10 @@ def bwt_decode(enc_input):
             output[input_length - i - 1] = next_byte
             local_index = byte_start[next_byte] + indices[local_index]
         yield bytes(output).rstrip(b"\x03").strip(b"\x02")
-        input_chunk = read_chunk(enc_input)
+        input_chunk = _read_chunk(enc_input)
 
 
-def read_chunk(source):
+def _read_chunk(source):
     """Read chunk of data from generator and return it.
     :param source: source generator for the bytes.
     :return: chunk of bwt encoded data.
@@ -73,7 +73,7 @@ def read_chunk(source):
     return next_bytes
 
 
-def create_indices(bwt_input):
+def _create_indices(bwt_input):
     """Generate indices helper list for BWT uncompression.
     :param bwt_input: byte string input.
     :return: indice lists for the uncompression.
@@ -95,7 +95,7 @@ def create_indices(bwt_input):
     return byte_start, indices
 
 
-def find_decoded(table):
+def _find_decoded(table):
     """Look for row which ends to "end of text" (ETX) control character.
     :param table: table of strings, where one should end with ETX control
     character.
